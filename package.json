@@ -1,0 +1,34 @@
+{
+	"name": "mern-blog",
+	"version": "1.0.0",
+	"description": "my test app from youtube tutorial with MERN stack",
+	"main": "index.js",
+	"type": "module",
+	"scripts": {
+		"dev": "nodemon index.js",
+		"start": "node index.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/PavloMylkus/blog-mern-stack.git"
+	},
+	"keywords": [
+		"MERN",
+		"Full-stack",
+		"node",
+		"js",
+		"ts",
+		"server",
+		"react"
+	],
+	"author": "Pavlo Mylkus",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/PavloMylkus/blog-mern-stack/issues"
+	},
+	"homepage": "https://github.com/PavloMylkus/blog-mern-stack#readme",
+	"dependencies": {
+		"express": "^4.18.2",
+		"nodemon": "^2.0.20"
+	}
+}
