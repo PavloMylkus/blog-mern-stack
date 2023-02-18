@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import multer from "multer";
 import fs from 'fs';
+import cors from 'cors';
 import { registerValidator, loginValidator, postCreateValidator } from './validations/validations.js';
 import { UserControler, PostControler } from './controlers/index.js'
 import { handleValidationErrors, checkAuth } from "./utils/index.js";
