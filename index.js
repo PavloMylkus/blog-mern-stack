@@ -6,7 +6,7 @@ import { registerValidator, loginValidator, postCreateValidator } from './valida
 import { UserControler, PostControler } from './controlers/index.js'
 import { handleValidationErrors, checkAuth } from "./utils/index.js";
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3030;
 const MONGODB_URL = 'mongodb+srv://pavlo:Ppavlo82@cluster0.rweko5y.mongodb.net/blog?retryWrites=true&w=majority';
 //MongoDB conect
 mongoose.set('strictQuery', true);
