@@ -2,7 +2,6 @@ import express from "express";
 import mongoose from "mongoose";
 import multer from "multer";
 import fs from 'fs';
-import cors from 'cors';
 import { registerValidator, loginValidator, postCreateValidator } from './validations/validations.js';
 import { UserControler, PostControler } from './controlers/index.js'
 import { handleValidationErrors, checkAuth } from "./utils/index.js";
@@ -32,7 +31,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage })
 
 app.use(express.json());	//щоб app розумів параметри json з body
-app.use(cors());
 app.use('/uploads', express.static('uploads'))
 
 app.get('/', (req, res) => {
