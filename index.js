@@ -30,7 +30,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage })
 
-app.use(express.json());	//щоб app розумів параметри json з body
+app.use(express.json());//щоб app розумів параметри json з body
+app.use(cors());
 app.use('/uploads', express.static('uploads'))
 
 app.get('/', (req, res) => {
