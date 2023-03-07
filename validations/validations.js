@@ -14,6 +14,7 @@ export const loginValidator = [
 export const postCreateValidator = [
 	body('title', 'Введіть заголовок статті').isLength({ min: 5 }).isString(),
 	body('text', 'введіть текс статті').isLength({ min: 5 }).isString(),
-	body('tags', 'Невірний формат тегів (укажіть масив)').optional().isString(),
+	body('tags', 'Невірний формат тегів (укажіть масив)').optional().isArray(),
 	body('imageUrl', 'Невірне посилання').optional().isString(),
+	body('price', 'Невірний формат').optional().isNumeric(),
 ]

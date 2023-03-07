@@ -88,6 +88,7 @@ export const create = async (req, res) => {
 			imageUrl: req.body.imageUrl,
 			tags: req.body.tags,
 			user: req.userId,
+			price: req.price
 		})
 		const post = await doc.save();
 		res.json(post)
@@ -110,6 +111,7 @@ export const update = async (req, res) => {
 			imageUrl: req.body.imageUrl,
 			tags: req.body.tags,
 			user: req.userId,
+			price: req.price
 		})
 		res.json({
 			success: true
