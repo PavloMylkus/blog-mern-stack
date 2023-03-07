@@ -23,7 +23,10 @@ const PostSchema = new mongoose.Schema({
 		required: true
 	},
 	imageUrl: String,
-	price: Number
+	price: {
+		type: Number,
+		required: true
+	}
 }, {
 	timestamps: true,
 });
