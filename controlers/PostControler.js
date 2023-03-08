@@ -88,7 +88,7 @@ export const create = async (req, res) => {
 			imageUrl: req.body.imageUrl,
 			tags: req.body.tags,
 			user: req.userId,
-			price: req.price
+			price: req.body.price
 		})
 		const post = await doc.save();
 		res.json(post)
