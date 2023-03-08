@@ -111,7 +111,7 @@ export const update = async (req, res) => {
 			imageUrl: req.body.imageUrl,
 			tags: req.body.tags,
 			user: req.userId,
-			price: req.price
+			price: req.body.price
 		})
 		res.json({
 			success: true
