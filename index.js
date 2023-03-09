@@ -2,10 +2,32 @@ import express from "express";
 import mongoose from "mongoose";
 import multer from "multer";
 import fs from 'fs';
+import sharp from 'sharp'
 import cors from 'cors';
 import { registerValidator, loginValidator, postCreateValidator } from './validations/validations.js';
 import { UserControler, PostControler } from './controlers/index.js'
 import { handleValidationErrors, checkAuth } from "./utils/index.js";
+import crypto from 'crypto'
+import { S3Client , PutObjectCommand,GetObjectCommand} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import dotenv from 'dotenv'
+
+dotenv.config()
+
+const randomImageName = (bytes = 32)=> crypto.randomBytes(bytes).toString('hex')
+
+const bucketName = process.env.BUCKET_NAME
+const bucketRegion = process.env.BUCKET_REGION
+const accessKey = process.env.ACCESS_KEY
+const secretAccessKey = process.env.SECRET_ACCESS_KEY
+
+const s3 = new S3Client({
+	credentials:{
+		accessKeyId: accessKey,
+		secretAccessKey:secretAccessKey
+	},
+	region:bucketRegion
+})
 
 const PORT = process.env.PORT || 3030;
 const MONGODB_URL = 'mongodb+srv://pavlo:Ppavlo82@cluster0.rweko5y.mongodb.net/blog?retryWrites=true&w=majority';
@@ -17,19 +39,11 @@ mongoose.connect(MONGODB_URL)
 
 const app = express();
 
-const storage = multer.diskStorage({
-	destination: (_, __, cb) => {
-		if (!fs.existsSync('uploads')) {
-			fs.mkdirSync('uploads');
-		}
-		cb(null, 'uploads');
-	},
-	filename: (_, file, cb) => {
-		cb(null, file.originalname);
-	},
-});
+//todo new image storage 
+const storage = multer.memoryStorage()
+const upload = multer({ storage: storage })
 
-const upload = multer({ storage })
+
 
 app.use(express.json());	//щоб app розумів параметри json з body
 app.use(cors());
@@ -46,11 +60,15 @@ app.post('/auth/register', registerValidator, handleValidationErrors, UserContro
 //маршрут для получення своїх данних
 app.get('/auth/me', checkAuth, UserControler.getMe);
 
-app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
-	res.json({
-		url: `/uploads/${req.file.originalname}`,
-	});
-});
+// upload image
+
+
+
+// app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
+// 	res.json({
+// 		url: `/uploads/${req.file.originalname}`,
+// 	});
+// });
 
 // CRUD
 app.get('/posts', PostControler.getAll)
@@ -58,6 +76,32 @@ app.get('/posts/:id', PostControler.getOne)
 app.post('/posts', checkAuth, postCreateValidator, handleValidationErrors, PostControler.create)
 app.delete('/posts/:id', checkAuth, PostControler.remove)
 app.patch('/posts/:id', checkAuth, postCreateValidator, handleValidationErrors, PostControler.update)
+
+app.post('/upload', upload.single('image'), async (req, res) => {
+	
+	const imageName = randomImageName()
+	// resize image
+	const buffer = await sharp(req.file.buffer).resize({height: 1920, width: 1080, fit: 'contain'}).toBuffer()
+
+	const params = {
+		Bucket: bucketName,
+		Key: imageName,
+		Body: buffer,
+		ContentType: req.file.mimetype
+	}
+	const getObjectParams = {
+		Bucket: bucketName,
+		Key: imageName,
+	}
+
+	const putCommand = new PutObjectCommand(params)
+	const getCommand = new GetObjectCommand(getObjectParams);
+	await s3.send(putCommand)
+	const url = await getSignedUrl(s3, getCommand);
+	res.send({
+		imageUrl: url,
+	});
+  })
 
 app.listen(PORT, (err) => {
 	if (err) {
