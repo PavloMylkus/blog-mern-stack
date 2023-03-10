@@ -29,6 +29,7 @@ const s3 = new S3Client({
 	region:bucketRegion
 })
 
+
 const PORT = process.env.PORT || 3030;
 const MONGODB_URL = 'mongodb+srv://pavlo:Ppavlo82@cluster0.rweko5y.mongodb.net/blog?retryWrites=true&w=majority';
 //MongoDB conect
@@ -77,6 +78,8 @@ app.post('/posts', checkAuth, postCreateValidator, handleValidationErrors, PostC
 app.delete('/posts/:id', checkAuth, PostControler.remove)
 app.patch('/posts/:id', checkAuth, postCreateValidator, handleValidationErrors, PostControler.update)
 
+
+
 app.post('/upload', upload.single('image'), async (req, res) => {
 	
 	const imageName = randomImageName()
@@ -87,22 +90,28 @@ app.post('/upload', upload.single('image'), async (req, res) => {
 		Bucket: bucketName,
 		Key: imageName,
 		Body: buffer,
-		ContentType: req.file.mimetype
+		ContentType: req.file.mimetype,
+		ACL: 'public-read',
 	}
 	const getObjectParams = {
 		Bucket: bucketName,
-		Key: imageName,
+		Key:imageName,
 	}
 
 	const putCommand = new PutObjectCommand(params)
 	const getCommand = new GetObjectCommand(getObjectParams);
 	await s3.send(putCommand)
-	const url = await getSignedUrl(s3, getCommand);
+	// const url = await getSignedUrl(s3, getCommand);
+	const imageUrl = `https://${bucketName}.s3.${bucketRegion}.amazonaws.com/${imageName}`;
 	res.send({
-		imageUrl: url,
+		imageUrl,
 	});
   })
 
+  app.get('/images', async (req, res)=>{
+
+	
+  })
 app.listen(PORT, (err) => {
 	if (err) {
 		return console.log(err);
