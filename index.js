@@ -84,7 +84,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
 	
 	const imageName = randomImageName()
 	// resize image
-	const buffer = await sharp(req.file.buffer).resize({height: 1920, width: 1080, fit: 'contain'}).toBuffer()
+	const buffer = await sharp(req.file.buffer).resize({height: 1350, width: 1080, fit: 'contain'}).toBuffer()
 
 	const params = {
 		Bucket: bucketName,
